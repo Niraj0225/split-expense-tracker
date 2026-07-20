@@ -1,0 +1,47 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: split-expense-tracker
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/split_expense_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: split-expense-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+app:
+  kafka:
+    topic:
+      expense-events: expense-events-topic
+  jwt:
+    secret: ${JWT_SECRET:thisIsAVeryLongSecretKeyForJWTThatMustBeAtLeast256BitsLongForHMACSHA}
+    expiration-ms: 86400000
